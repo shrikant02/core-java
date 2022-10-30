@@ -8,19 +8,26 @@ public class Consumer extends Thread{
 
     @Override
     public void run(){
-        while(true){
-            synchronized (Main.bucket) { // decide which is out monitor
-                if (!Main.bucket.isEmpty()) {
-                    int n = Main.bucket.get(0);
-                    Main.bucket.remove(0);
-                    System.out.println(Thread.currentThread().getName() + " took out " + n + " from the bucket");
+        try {
+            while (true) {
+                synchronized (Main.bucket) { // decide which is out monitor
+                    if (!Main.bucket.isEmpty()) {
+                        int n = Main.bucket.get(0);
+                        Main.bucket.remove(0);
+                        Main.bucket.notifyAll();
+                        System.out.println(Thread.currentThread().getName() + " took out " + n + " from the bucket");
+                    } else {
+                        Main.bucket.wait();
+                    }
                 }
             }
+        } catch (InterruptedException e){
+            e.printStackTrace();
         }
     }
 }
 
-// one thread the has entered the block of code(acquired lock) no other thread are now allowed to enter the thread block of code
+// one thread that has entered the block of code(acquired lock) no other thread are now allowed to enter the block of code
 // until the execution is ended(released the lock) => we use synchronized keyword to do this
 
 // Main.bucket is our monitor here
