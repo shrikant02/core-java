@@ -18,7 +18,6 @@ public class Main {
         p2.start();
         c1.start();
         c2.start();
-
     }
 }
 // zombie thread => which only runs but does nothing
